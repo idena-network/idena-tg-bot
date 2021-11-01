@@ -1,0 +1,90 @@
+CreateCollection({
+  name: "sessions",
+  history_days: 30,
+  ttl_days: null
+})
+
+CreateCollection({
+  name: "triggers",
+  history_days: 30,
+  ttl_days: null
+})
+
+CreateCollection({
+  name: "users",
+  history_days: 30,
+  ttl_days: null
+})
+
+CreateIndex({
+  name: "sessions_by_token",
+  unique: true,
+  serialized: true,
+  source: "sessions",
+  terms: [
+    {
+      field: ["data", "token"]
+    }
+  ]
+})
+
+CreateIndex({
+  name: "triggers_by_id_epoch",
+  unique: true,
+  serialized: true,
+  source: "triggers",
+  terms: [
+    {
+      field: ["data", "id"]
+    },
+    {
+      field: ["data", "epoch"]
+    }
+  ]
+})
+
+CreateIndex({
+  name: "users_by_tgUserId",
+  unique: true,
+  serialized: true,
+  source: "users",
+  terms: [
+    {
+      field: ["data", "tgUserId"]
+    }
+  ]
+})
+
+CreateIndex({
+  name: "users_by_token",
+  unique: false,
+  serialized: true,
+  source: "users",
+  terms: [
+    {
+      field: ["data", "token"]
+    }
+  ]
+})
+
+CreateIndex({
+  name: "users_with_coinbase",
+  unique: false,
+  serialized: true,
+  source: [{
+    collection: Collection("users"),
+    fields: {
+      has_coinbase: Query(
+        Lambda(
+          "k",
+          Not(Equals(Select(["data", "coinbase"], Var("k"), null), null))
+        )
+      )
+    }
+  }],
+  terms: [
+    {
+      binding: "has_coinbase"
+    }
+  ]
+})
