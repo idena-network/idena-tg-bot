@@ -8,7 +8,7 @@ const InviteeReminderTrigger = require('./triggers/invitee-reminder-trigger')
 const IssueInviteTrigger = require('./triggers/issue-invite-trigger')
 const ValidationResultTrigger = require('./triggers/validation-result-trigger')
 const ValidationTrigger = require('./triggers/validation-trigger')
-const {log} = require('./utils')
+const {log, logError} = require('./utils')
 
 /**
  * @typedef User
@@ -51,7 +51,7 @@ class Watcher extends EventEmitter {
         })
       })
     } catch (e) {
-      console.error(e)
+      logError(`error while loading users ${e.message}`)
       throw new Error('canot load users')
     }
   }
@@ -125,7 +125,7 @@ class Watcher extends EventEmitter {
           user.identity = identity
         }
       } catch (e) {
-        console.error('error while loading identity', e)
+        logError(`error while loading identity ${e.message}`)
       }
     }
 

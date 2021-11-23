@@ -2,14 +2,14 @@ const {v4: uuidv4} = require('uuid')
 const express = require('express')
 const bodyParser = require('body-parser')
 const {createSession, getSession, updateSession} = require('./fauna')
-const {checkSignature, log} = require('./utils')
+const {checkSignature, log, logError} = require('./utils')
 
 const app = express()
 app.use(bodyParser.json())
 const port = parseInt(process.env.WEBSERVER_PORT)
 
 app.use(function(err, req, res, next) {
-  console.error(err.stack)
+  logError(err.stack)
   res.status(500).send('Something broke!')
 })
 

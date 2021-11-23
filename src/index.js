@@ -4,14 +4,14 @@ const {v4: uuidv4} = require('uuid')
 const {Telegraf, Markup} = require('telegraf')
 const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
-const {GenerateDnaUrl, escape, log} = require('./utils')
+const {GenerateDnaUrl, escape, log, logError} = require('./utils')
 const {startWebServer} = require('./webserver')
 const {addOrUpdateUser, getUserByToken, getSession, updateUser} = require('./fauna')
 
 dayjs.extend(utc)
 
 process.on('unhandledRejection', error => {
-  console.error(error.stack || error)
+  logError(error.stack || error)
 })
 
 const Watcher = require('./watcher')
@@ -54,7 +54,7 @@ async function onAuth(token) {
       parse_mode: 'MarkdownV2',
     })
   } catch (e) {
-    console.error(e)
+    logError(`error while executing onAuth ${e.message}`)
   }
 }
 
@@ -80,7 +80,7 @@ bot.hears(/\/when/, async ctx => {
       parse_mode: 'MarkdownV2',
     })
   } catch (e) {
-    console.error(e)
+    logError(`error while executing /when ${e.message}`)
   }
 })
 

@@ -43,7 +43,7 @@ class IssueInviteTrigger extends EventEmitter {
         })
       }
     } catch (e) {
-      console.error(`[${this.constructor.name}], user: ${user.coinbase}, error: ${e.message}`)
+      logError(`[${this.constructor.name}], user: ${user.coinbase}, error: ${e.message}`)
     }
   }
 
