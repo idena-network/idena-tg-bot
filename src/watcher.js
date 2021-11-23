@@ -8,7 +8,7 @@ const InviteeReminderTrigger = require('./triggers/invitee-reminder-trigger')
 const IssueInviteTrigger = require('./triggers/issue-invite-trigger')
 const ValidationResultTrigger = require('./triggers/validation-result-trigger')
 const ValidationTrigger = require('./triggers/validation-trigger')
-const {log, logError} = require('./utils')
+const {log, logError, sleep} = require('./utils')
 
 /**
  * @typedef User
@@ -27,6 +27,18 @@ const allTriggers = [
   ValidationTrigger,
   InviteeReminderTrigger,
 ]
+
+async function waitForNode() {
+  let epoch = null
+  while (!epoch) {
+    try {
+      epoch = await getEpoch()
+    } catch (e) {
+      logError('node is not ready!')
+      await sleep(1000)
+    }
+  }
+}
 
 class Watcher extends EventEmitter {
   constructor() {
@@ -97,6 +109,10 @@ class Watcher extends EventEmitter {
   }
 
   async launch() {
+    log('launching bot')
+
+    await waitForNode()
+
     await this._loadUsers()
     await this._updateIdentities()
 
@@ -104,6 +120,8 @@ class Watcher extends EventEmitter {
     this.ready = true
 
     this._restartTriggers()
+
+    log('launch done!')
   }
 
   onNewUser(data) {

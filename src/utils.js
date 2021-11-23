@@ -90,6 +90,10 @@ function adjustDateToValidationTime(date) {
   return dayjs(Date.UTC(dt.get('year'), dt.get('month'), dt.get('date'), 13, 30, 0, 0))
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 module.exports = {
   GenerateDnaUrl,
   checkSignature,
@@ -100,4 +104,5 @@ module.exports = {
   logError,
   buildNextValidationCalendarLink,
   adjustDateToValidationTime,
+  sleep,
 }
