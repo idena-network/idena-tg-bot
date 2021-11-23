@@ -2,7 +2,7 @@ const {v4: uuidv4} = require('uuid')
 const express = require('express')
 const bodyParser = require('body-parser')
 const {createSession, getSession, updateSession} = require('./fauna')
-const {checkSignature} = require('./utils')
+const {checkSignature, log} = require('./utils')
 
 const app = express()
 app.use(bodyParser.json())
@@ -53,7 +53,7 @@ function startWebServer(onAuth) {
   })
 
   return app.listen(port, () => {
-    console.log(`Idena tg bot listening at http://localhost:${port}`)
+    log(`Idena tg bot listening at http://localhost:${port}`)
   })
 }
 

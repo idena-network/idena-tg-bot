@@ -1,0 +1,90 @@
+{
+    "validation": {
+        "ready": {
+            "1-day": {
+                "default": "🔛 Please activate invitation code to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
+                "invite": "🔛 Please accept invitation to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
+                "candidate": "⏰Validation ceremony starts in 1 day⏰\n🔛 Make yourself prepared",
+                "newbie-1": "⏰Validation ceremony starts in 1 day⏰\n🔛 Make yourself prepared",
+                "newbie": "⏰Validation ceremony starts in 1 day⏰\n🔛 Make yourself prepared",
+                "verified": "⏰Validation ceremony starts in 1 day⏰\n🔛 Make yourself prepared",
+                "human": "⏰Validation ceremony starts in 1 day⏰\n🔛 Make yourself prepared"
+            },
+            "1-hour": {
+                "default": "🔛 Please activate invitation code to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour",
+                "invite": "🔛 Accept invitation as soon as possible to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour",
+                "candidate": "⏰Validation ceremony starts in 1 hour\n🔛 Make yourself prepared",
+                "newbie-1": "⏰Validation ceremony starts in 1 hour\n🔛 Make yourself prepared",
+                "newbie": "⏰Validation ceremony starts in 1 hour\n🔛 Make yourself prepared",
+                "verified": "⏰Validation ceremony starts in 1 hour\n🔛 Make yourself prepared",
+                "human": "⏰Validation ceremony starts in 1 hour\n🔛 Make yourself prepared"
+            },
+            "5-min": {
+                "candidate": "⚡️Get ready\\!\\!\\!⚡️\n⏰Validation ceremony starts in 5 minutes",
+                "newbie-1": "⚡️Get ready\\!\\!\\!⚡️\n⏰Validation ceremony starts in 5 minutes",
+                "newbie": "⚡️Get ready\\!\\!\\!⚡️\n⏰Validation ceremony starts in 5 minutes",
+                "verified": "⚡️Get ready\\!\\!\\!⚡️\n⏰Validation ceremony starts in 5 minutes",
+                "human": "⚡️Get ready\\!\\!\\!⚡️\n⏰Validation ceremony starts in 5 minutes"
+            },
+            "now": {
+                "candidate": "Go🚀🚀🚀",
+                "newbie-1": "Go🚀🚀🚀",
+                "newbie": "Go🚀🚀🚀",
+                "verified": "Go🚀🚀🚀",
+                "human": "Go🚀🚀🚀"
+            }
+        },
+        "not-ready": {
+            "left-50%-epoch": {
+                "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in {0} days"
+            },
+            "1-day": {
+                "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
+                "newbie": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
+                "verified": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
+                "human": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day"
+            },
+            "1-hour": {
+                "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour",
+                "newbie": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour",
+                "verified": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour",
+                "human": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 hour"
+            }
+        }
+    },
+    "extra-flip": {
+        "verified": "Submit extra flip to get higher rewards",
+        "human": "Submit extra flip to get higher rewards"
+    },
+    "accept-invite": {
+        "invite": "Congrats\\! You are invited to join the upcoming validation\\. Please accept the invitation\\."
+    },
+    "issue-invite": {
+        "left-80%-epoch": {
+            "verified": "Invite your friends to earn invitation rewards\\.\nYou have {invites-count} left",
+            "human": "Invite your friends to earn invitation rewards\\.\nYou have {invites-count} left"
+        },
+        "left-50%-epoch": {
+            "verified": "You have {invites-count} left\\. To get maximum invitation rewards, invite your friends to join the validation\\.",
+            "human": "You have {invites-count} left\\. To get maximum invitation rewards, invite your friends to join the validation\\."
+        }
+    },
+    "remind-invitee": {
+        "invitee-ready": {
+            "verified": "All your invitees are ready for the validation, great job\\! Remind them about the validation to make sure they won't miss it:\n",
+            "human": "All your invitees are ready for the validation, great job\\! Remind them about the validation to make sure they won't miss it:\n"
+        },
+        "invitee-not-ready": {
+            "verified": "Some of your invitees are not ready for the validation\\.\nTo get maximum invitation rewards, remind them to activate invitation codes and submit flips:\n",
+            "human": "Some of your invitees are not ready for the validation\\.\nTo get maximum invitation rewards, remind them to activate invitation codes and submit flips:\n"
+        }
+    },
+    "validation-result": {
+        "default": "Validation failed\\. Your identity is not validated\\.\n[Validation results]({report-link})\nDon't give up, what doesn't kill you makes you stronger\\. Check the validation results to understand the reasons of failure and join the next validation for better results\\.\nTo join the next validation, you need a new invitation code\\.",
+        "candidate": "Validation failed\\. Your identity status is {identity-state}\\. To keep your identity validated, attend the next validation ceremony\\.🗓[Add validation to your calendar]({calendar-link})",
+        "newbie-1": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
+        "newbie": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
+        "verified": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})",
+        "human": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})"
+    }
+}

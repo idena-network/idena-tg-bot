@@ -4,7 +4,7 @@ const {v4: uuidv4} = require('uuid')
 const {Telegraf, Markup} = require('telegraf')
 const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
-const {GenerateDnaUrl, escape} = require('./utils')
+const {GenerateDnaUrl, escape, log} = require('./utils')
 const {startWebServer} = require('./webserver')
 const {addOrUpdateUser, getUserByToken, getSession, updateUser} = require('./fauna')
 
@@ -26,7 +26,7 @@ watcher.on('message', async ({message, chatId}) => {
       parse_mode: 'MarkdownV2',
     })
   } catch (e) {
-    console.log(e)
+    log(`error while writing to telegram, ${e.message}`)
   }
 })
 
@@ -82,24 +82,6 @@ bot.hears(/\/when/, async ctx => {
   } catch (e) {
     console.error(e)
   }
-})
-
-// Handle callback queries
-bot.on('callback_query', function onCallbackQuery(ctx) {
-  console.log(ctx)
-  //   const action = callbackQuery.data
-  //   const msg = callbackQuery.message
-  //   const opts = {
-  //     chat_id: msg.chat.id,
-  //     message_id: msg.message_id,
-  //   }
-  //   let text
-
-  //   if (action === 'edit') {
-  //     text = 'Edited Text'
-  //   }
-
-  //   bot.editMessageText('yes yes yes', opts)
 })
 
 watcher.launch()
