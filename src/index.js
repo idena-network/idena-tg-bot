@@ -74,7 +74,7 @@ bot.hears(/\/start/, async ctx => {
 
 bot.hears(/\/when/, async ctx => {
   try {
-    const dt = dayjs(watcher.epochData.validationTime).utc()
+    const dt = dayjs(watcher.epochData.nextValidation).utc()
 
     await ctx.reply(`Next validation date: *${escape(dt.format('YYYY-MM-DD HH:mm:ss UTC'))}*`, {
       parse_mode: 'MarkdownV2',
