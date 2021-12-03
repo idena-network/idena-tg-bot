@@ -6,7 +6,7 @@ const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
 const {GenerateDnaUrl, escape, log, logError} = require('./utils')
 const {startWebServer} = require('./webserver')
-const {addOrUpdateUser, getUserByToken, getSession, updateUser} = require('./fauna')
+const {addOrUpdateUser, getUserByToken, getSession, updateUser, getUserByTgId} = require('./fauna')
 
 dayjs.extend(utc)
 
@@ -81,6 +81,21 @@ bot.hears(/\/when/, async ctx => {
     })
   } catch (e) {
     logError(`error while executing /when ${e.message}`)
+  }
+})
+
+bot.hears(/\/me/, async ctx => {
+  try {
+    const user = await getUserByTgId(ctx.message.from.id)
+    if (user?.data?.coinbase) {
+      await ctx.reply(`Your coinbase: *${user.data.coinbase}*`, {
+        parse_mode: 'MarkdownV2',
+      })
+    } else {
+      await ctx.reply('No user found! Please /start Idena bot.')
+    }
+  } catch (e) {
+    logError(`error while executing /me ${e.message}`)
   }
 })
 

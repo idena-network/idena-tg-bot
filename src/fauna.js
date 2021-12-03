@@ -77,6 +77,17 @@ function getUserByToken(token) {
   return serverClient.query(q.Get(q.Match(q.Index('users_by_token'), token)))
 }
 
+function getUserByTgId(tgUserId) {
+  return serverClient.query(
+    q.Let(
+      {
+        existing: q.Match(q.Index('users_by_tgUserId'), tgUserId),
+      },
+      q.If(q.Exists(q.Var('existing')), q.Get(q.Var('existing')), null)
+    )
+  )
+}
+
 async function getUserList() {
   const {data} = await serverClient.query(
     q.Map(
@@ -112,4 +123,5 @@ module.exports = {
   getUserList,
   isTriggerDone,
   persistTrigger,
+  getUserByTgId,
 }
