@@ -80,7 +80,7 @@
         }
     },
     "validation-result": {
-        "default": "Validation failed\\. Your identity is not validated\\.\n[Validation results]({report-link})\nDon't give up, what doesn't kill you makes you stronger\\. Check the validation results to understand the reasons of failure and join the next validation for better results\\.\nTo join the next validation, you need a new invitation code\\.",
+        "default": "Validation failed\\. Your identity is not validated\\.\n[Validation results]({report-link})\nCheck the validation results to understand the reasons of failure and join the next validation for better results\\.\nTo join the next validation, you need a new invitation code\\.",
         "candidate": "Validation failed\\. Your identity status is {identity-state}\\. To keep your identity validated, attend the next validation ceremony\\.🗓[Add validation to your calendar]({calendar-link})",
         "newbie-1": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
         "newbie": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
