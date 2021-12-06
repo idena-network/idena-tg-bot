@@ -6,7 +6,7 @@ const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
 const {GenerateDnaUrl, escape, log, logError} = require('./utils')
 const {startWebServer} = require('./webserver')
-const {addOrUpdateUser, getUserByToken, getSession, updateUser, getUserByTgId} = require('./fauna')
+const {addOrUpdateUser, getUserByToken, getSession, updateUser, getUserByTgId, deleteUserByTgId} = require('./fauna')
 
 dayjs.extend(utc)
 
@@ -54,7 +54,7 @@ async function onAuth(token) {
       parse_mode: 'MarkdownV2',
     })
   } catch (e) {
-    logError(`error while executing onAuth ${e.message}`)
+    logError(`error while executing onAuth: ${e.message}`)
   }
 }
 
@@ -62,14 +62,29 @@ const server = startWebServer(onAuth)
 
 // Matches /love
 bot.hears(/\/start/, async ctx => {
-  const id = uuidv4()
+  try {
+    const user = await getUserByTgId(ctx.message.from.id)
 
-  const msg = await ctx.reply(
-    'Hello, please login to recieve notifications',
-    Markup.inlineKeyboard([Markup.button.url('Login through Idena', GenerateDnaUrl(id))])
-  )
+    if (user?.data?.coinbase) {
+      await ctx.reply(
+        `My address: *${user.data.coinbase}*\n\nAvailable commands:\n/me \\- Get my address\n/when \\- Get next validation date\n/logout \\- Logout from Idena Bot`,
+        {
+          parse_mode: 'MarkdownV2',
+        }
+      )
+    } else {
+      const id = uuidv4()
 
-  await addOrUpdateUser(id, ctx.message.from.id, ctx.message.chat.id, msg.message_id)
+      const msg = await ctx.reply(
+        'Hello, please login to recieve notifications',
+        Markup.inlineKeyboard([Markup.button.url('Login with Idena App', GenerateDnaUrl(id))])
+      )
+
+      await addOrUpdateUser(id, ctx.message.from.id, ctx.message.chat.id, msg.message_id)
+    }
+  } catch (e) {
+    logError(`error while executing /start: ${e.message}`)
+  }
 })
 
 bot.hears(/\/when/, async ctx => {
@@ -80,7 +95,7 @@ bot.hears(/\/when/, async ctx => {
       parse_mode: 'MarkdownV2',
     })
   } catch (e) {
-    logError(`error while executing /when ${e.message}`)
+    logError(`error while executing /when: ${e.message}`)
   }
 })
 
@@ -88,14 +103,28 @@ bot.hears(/\/me/, async ctx => {
   try {
     const user = await getUserByTgId(ctx.message.from.id)
     if (user?.data?.coinbase) {
-      await ctx.reply(`Your coinbase: *${user.data.coinbase}*`, {
+      await ctx.reply(`My address: *${user.data.coinbase}*`, {
         parse_mode: 'MarkdownV2',
       })
     } else {
       await ctx.reply('No user found! Please /start Idena bot.')
     }
   } catch (e) {
-    logError(`error while executing /me ${e.message}`)
+    logError(`error while executing /me: ${e.message}`)
+  }
+})
+
+bot.hears(/\/logout/, async ctx => {
+  try {
+    const user = await getUserByTgId(ctx.message.from.id)
+    if (user?.data?.coinbase) {
+      await deleteUserByTgId(ctx.message.from.id)
+      await ctx.reply('Logout successful')
+    } else {
+      await ctx.reply('No user found! Please /start Idena bot.')
+    }
+  } catch (e) {
+    logError(`error while executing /me: ${e.message}`)
   }
 })
 

@@ -88,6 +88,17 @@ function getUserByTgId(tgUserId) {
   )
 }
 
+function deleteUserByTgId(tgUserId) {
+  return serverClient.query(
+    q.Let(
+      {
+        existing: q.Match(q.Index('users_by_tgUserId'), tgUserId),
+      },
+      q.If(q.Exists(q.Var('existing')), q.Delete(q.Select('ref', q.Get(q.Var('existing')))), null)
+    )
+  )
+}
+
 async function getUserList() {
   const {data} = await serverClient.query(
     q.Map(
@@ -124,4 +135,5 @@ module.exports = {
   isTriggerDone,
   persistTrigger,
   getUserByTgId,
+  deleteUserByTgId,
 }
