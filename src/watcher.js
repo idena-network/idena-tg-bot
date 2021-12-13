@@ -134,6 +134,14 @@ class Watcher extends EventEmitter {
     }
   }
 
+  onDeleteUser(dbId) {
+    const index = this.users.findIndex(x => x.dbId === dbId)
+
+    if (index !== -1) {
+      this.users.splice(index, 1)
+    }
+  }
+
   async _updateIdentities() {
     for (const user of this.users) {
       try {

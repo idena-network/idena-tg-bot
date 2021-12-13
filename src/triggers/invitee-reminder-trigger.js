@@ -9,9 +9,9 @@ const {getNotification, logError, log} = require('../utils')
 const ID = 'remind-invitee'
 
 function getInviteeStatus(address, flipsReady, activated) {
-  if (flipsReady && activated) return `${address} \\- ready for validation`
-  if (!activated) return `${address} \\- invite not activated`
-  return `${address} \\- flips not submitted`
+  if (flipsReady && activated) return `[${address}](https://scan.idena.io/address/${address}) \\- ready for validation`
+  if (!activated) return `[${address}](https://scan.idena.io/address/${address}) \\- invite not activated`
+  return `[${address}](https://scan.idena.io/address/${address}) \\- flips not submitted`
 }
 
 class InviteeReminderTrigger extends EventEmitter {
@@ -34,32 +34,42 @@ class InviteeReminderTrigger extends EventEmitter {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  async _processIdentity(identity) {
+    if (!identity.invitees?.length) return null
+
+    const result = []
+
+    for (const invitee of identity.invitees) {
+      const {Address: address} = invitee
+
+      const inviteeIdentity = await getIdentity(address)
+
+      const flipsReady = inviteeIdentity.madeFlips >= inviteeIdentity.requiredFlips
+
+      result.push({address, flipsReady, activated: inviteeIdentity.state !== IdentityStatus.Invite})
+    }
+
+    const segment = result.every(x => x.flipsReady && x.activated) ? 'invitee-ready' : 'invitee-not-ready'
+
+    let notification = getNotification('remind-invitee', segment)(identity)
+    if (notification) {
+      for (const invitee of result) {
+        notification += `\n${getInviteeStatus(invitee.address, invitee.flipsReady, invitee.activated)}`
+      }
+
+      return notification
+    }
+    return null
+  }
+
   async processUser(user) {
     try {
       const {identity} = user
 
-      if (!identity.invitees?.length) return
+      const notification = await this._processIdentity(identity)
 
-      const result = []
-
-      for (const invitee of identity.invitees) {
-        const {Address: address} = invitee
-
-        const inviteeIdentity = await getIdentity(address)
-
-        const flipsReady = inviteeIdentity.madeFlips >= inviteeIdentity.requiredFlips
-
-        result.push({address, flipsReady, activated: inviteeIdentity.state !== IdentityStatus.Invite})
-      }
-
-      const segment = result.every(x => x.flipsReady && x.activated) ? 'invitee-ready' : 'invitee-not-ready'
-
-      let notification = getNotification('remind-invitee', segment)(identity)
       if (notification) {
-        for (const invitee of result) {
-          notification += `\n${getInviteeStatus(invitee.address, invitee.flipsReady, invitee.activated)}`
-        }
-
         this.emit('message', {
           message: notification,
           user,
@@ -67,6 +77,16 @@ class InviteeReminderTrigger extends EventEmitter {
       }
     } catch (e) {
       logError(`[${this.constructor.name}], user: ${user.coinbase}, error: ${e.message}`)
+    }
+  }
+
+  async forceCheck(coinbase) {
+    try {
+      const identity = await getIdentity(coinbase)
+      const notification = await this._processIdentity(identity)
+      return notification
+    } catch (e) {
+      logError(`[${this.constructor.name}], force check, user: ${coinbase}, error: ${e.message}`)
     }
   }
 

@@ -15,6 +15,7 @@ process.on('unhandledRejection', error => {
 })
 
 const Watcher = require('./watcher')
+const InviteeReminderTrigger = require('./triggers/invitee-reminder-trigger')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -114,12 +115,34 @@ bot.hears(/\/me/, async ctx => {
   }
 })
 
+bot.hears(/\/invitees/, async ctx => {
+  try {
+    const user = await getUserByTgId(ctx.message.from.id)
+    if (user?.data?.coinbase) {
+      const trigger = new InviteeReminderTrigger()
+      const notification = await trigger.forceCheck(user?.data?.coinbase)
+      if (notification) {
+        await ctx.reply(notification, {
+          parse_mode: 'MarkdownV2',
+        })
+      } else {
+        await ctx.reply('No invitees.')
+      }
+    } else {
+      await ctx.reply('No user found! Please /start Idena bot.')
+    }
+  } catch (e) {
+    logError(`error while executing /invitees: ${e.message}`)
+  }
+})
+
 bot.hears(/\/logout/, async ctx => {
   try {
     const user = await getUserByTgId(ctx.message.from.id)
     if (user?.data?.coinbase) {
       await deleteUserByTgId(ctx.message.from.id)
       await ctx.reply('Logout successful')
+      watcher.onDeleteUser(user.ref.id)
     } else {
       await ctx.reply('No user found! Please /start Idena bot.')
     }
