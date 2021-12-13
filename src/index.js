@@ -21,6 +21,13 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 
 const watcher = new Watcher()
 
+const commands = [
+  '/me \\- Get my address',
+  '/when \\- Get next validation date',
+  '/invitees \\- Check my invitees',
+  '/logout \\- Logout from Idena Bot',
+]
+
 watcher.on('message', async ({message, chatId}) => {
   try {
     await bot.telegram.sendMessage(chatId, message, {
@@ -67,12 +74,9 @@ bot.hears(/\/start/, async ctx => {
     const user = await getUserByTgId(ctx.message.from.id)
 
     if (user?.data?.coinbase) {
-      await ctx.reply(
-        `My address: *${user.data.coinbase}*\n\nAvailable commands:\n/me \\- Get my address\n/when \\- Get next validation date\n/logout \\- Logout from Idena Bot`,
-        {
-          parse_mode: 'MarkdownV2',
-        }
-      )
+      await ctx.reply(`My address: *${user.data.coinbase}*\n\nAvailable commands:\n${commands.join('\n')}`, {
+        parse_mode: 'MarkdownV2',
+      })
     } else {
       const id = uuidv4()
 
