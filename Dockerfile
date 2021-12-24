@@ -9,4 +9,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "node", "src/index.js" ]
+CMD [ "node", "src/index.js", "|&", "tee", "-a", "log"]
