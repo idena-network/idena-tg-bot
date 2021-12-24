@@ -36,7 +36,7 @@
         },
         "not-ready": {
             "left-50%-epoch": {
-                "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in {0} days"
+                "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in {days-left} days"
             },
             "1-day": {
                 "newbie-1": "🔛 Please submit 3 flips to participate in the upcoming validation\n⏰Validation ceremony starts in 1 day",
@@ -81,7 +81,7 @@
     },
     "validation-result": {
         "default": "Validation failed\\. Your identity is not validated\\.\n[Validation results]({report-link})\nCheck the validation results to understand the reasons of failure and join the next validation for better results\\.\nTo join the next validation, you need a new invitation code\\.",
-        "candidate": "Validation failed\\. Your identity status is {identity-state}\\. To keep your identity validated, attend the next validation ceremony\\.🗓[Add validation to your calendar]({calendar-link})",
+        "candidate": "Validation failed\\. Your identity status is {identity-state}\\. To keep your identity validated, attend the next validation ceremony\\.\n🗓[Add validation to your calendar]({calendar-link})",
         "newbie-1": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
         "newbie": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
         "verified": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})",

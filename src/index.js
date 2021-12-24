@@ -28,14 +28,40 @@ const commands = [
   '/logout \\- Logout from Idena Bot',
 ]
 
-watcher.on('message', async ({message, chatId}) => {
-  try {
-    await bot.telegram.sendMessage(chatId, message, {
+const tgQueue = []
+let stopped = false
+
+function sendTgMessageLoop() {
+  const data = tgQueue.shift()
+
+  if (!data) {
+    if (!stopped) setTimeout(sendTgMessageLoop, 1)
+    return
+  }
+
+  const {message, chatId} = data
+  bot.telegram
+    .sendMessage(chatId, message, {
       parse_mode: 'MarkdownV2',
     })
-  } catch (e) {
-    log(`error while writing to telegram, ${e.message}`)
-  }
+    .then(() => setTimeout(sendTgMessageLoop, 1))
+    .catch(e => {
+      if (e.response?.error_code === 429) {
+        log(
+          `rate limit while writing to telegram, try_after: ${e.response.parameters?.retry_after}, queue_size: ${tgQueue.length}`
+        )
+        const waitSeconds = e.response.parameters?.retry_after || 5
+        tgQueue.unshift(data)
+        setTimeout(sendTgMessageLoop, waitSeconds * 1000)
+      } else {
+        log(`error while writing to telegram, ${e.message}`)
+        setTimeout(sendTgMessageLoop, 1)
+      }
+    })
+}
+
+watcher.on('message', ({message, chatId}) => {
+  tgQueue.push({message, chatId})
 })
 
 async function onAuth(token) {
@@ -159,12 +185,16 @@ watcher.launch()
 
 bot.launch()
 
+sendTgMessageLoop()
+
 // Enable graceful stop
 process.once('SIGINT', () => {
+  stopped = true
   server.close()
   bot.stop('SIGINT')
 })
 process.once('SIGTERM', () => {
+  stopped = true
   server.close()
   bot.stop('SIGTERM')
 })

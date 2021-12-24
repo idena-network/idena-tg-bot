@@ -52,8 +52,10 @@ class ValidationTrigger extends EventEmitter {
       const notification = getNotification(...path)(identity)
 
       if (notification) {
+        const message = notification.replace('{days-left}', this.nextValidation.diff(dayjs(), 'day'))
+
         this.emit('message', {
-          message: notification,
+          message,
           user,
         })
       }
@@ -67,6 +69,7 @@ class ValidationTrigger extends EventEmitter {
     this.epoch = epochData.epoch
 
     const nextValidation = dayjs(epochData.nextValidation)
+    this.nextValidation = nextValidation
 
     const currentBlock = await getLastBlock()
 
