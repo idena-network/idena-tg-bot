@@ -23,8 +23,8 @@ class ValidationResultTrigger extends EventEmitter {
               user,
             })
           }
-          await persistTrigger(ID, epoch)
         }
+        await persistTrigger(ID, epoch)
       }
     } catch (e) {
       logError(`[${this.constructor.name}], error: ${e.message}`)
