@@ -85,10 +85,6 @@ class Watcher extends EventEmitter {
 
     // validation finished
     if (prevEpoch !== newEpochData.epoch) {
-      const resultTrigger = new ValidationResultTrigger()
-      resultTrigger.on('message', ({message, user}) => this.emit('message', {message, chatId: user.chatId}))
-      await resultTrigger.start(newEpochData, this.users)
-
       this._restartTriggers()
     } else {
       setTimeout(() => this._waitForNewEpoch(prevEpoch), 5 * 60 * 1000)
@@ -100,6 +96,11 @@ class Watcher extends EventEmitter {
     const {epoch, nextValidation} = this.epochData
 
     log(`restart triggers, epoch: ${epoch}, next validation: ${nextValidation}`)
+
+    // run validation result trigger
+    const resultTrigger = new ValidationResultTrigger()
+    resultTrigger.on('message', ({message, user}) => this.emit('message', {message, chatId: user.chatId}))
+    await resultTrigger.start(this.epochData, this.users)
 
     for (const trigger of this.triggers) {
       await trigger.start(this.epochData, this.users)
