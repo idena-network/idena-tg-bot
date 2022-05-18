@@ -1,10 +1,9 @@
 /* eslint-disable no-continue */
 const dayjs = require('dayjs')
 const EventEmitter = require('events')
-const {getIdentity} = require('../api')
 const {isTriggerDone, persistTrigger} = require('../fauna')
 const {IdentityStatus} = require('../types')
-const {getNotification, logError, log} = require('../utils')
+const {getNotification, logError, log, getIdenaProvider} = require('../utils')
 
 const ID = 'remind-invitee'
 
@@ -43,7 +42,7 @@ class InviteeReminderTrigger extends EventEmitter {
     for (const invitee of identity.invitees) {
       const {Address: address} = invitee
 
-      const inviteeIdentity = await getIdentity(address)
+      const inviteeIdentity = await getIdenaProvider().Dna.identity(address)
 
       const flipsReady = inviteeIdentity.madeFlips >= inviteeIdentity.requiredFlips
 
@@ -82,7 +81,7 @@ class InviteeReminderTrigger extends EventEmitter {
 
   async forceCheck(coinbase) {
     try {
-      const identity = await getIdentity(coinbase)
+      const identity = await getIdenaProvider().Dna.identity(coinbase)
       const notification = await this._processIdentity(identity)
       return notification
     } catch (e) {

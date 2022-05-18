@@ -1,9 +1,15 @@
 /* eslint-disable no-continue */
 const dayjs = require('dayjs')
 const EventEmitter = require('events')
-const {getLastBlock} = require('../api')
 const {isTriggerDone, persistTrigger} = require('../fauna')
-const {getNotification, log, logError, getPercentDateByEpoch, adjustDateToValidationTime} = require('../utils')
+const {
+  getNotification,
+  log,
+  logError,
+  getPercentDateByEpoch,
+  adjustDateToValidationTime,
+  getIdenaProvider,
+} = require('../utils')
 
 class ValidationTrigger extends EventEmitter {
   async _doReady(path, users) {
@@ -71,7 +77,7 @@ class ValidationTrigger extends EventEmitter {
     const nextValidation = dayjs(epochData.nextValidation)
     this.nextValidation = nextValidation
 
-    const currentBlock = await getLastBlock()
+    const currentBlock = await getIdenaProvider().Blockchain.lastBlock()
 
     const current = dayjs()
 

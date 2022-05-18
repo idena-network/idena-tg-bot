@@ -86,5 +86,19 @@
         "newbie": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})\nGet ready for the next validation:\n🗓[Add validation to your calendar]({calendar-link})\n✅Create 3 flips",
         "verified": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})",
         "human": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})"
+    },
+    "oracle-voting-new": {
+        "default": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "newbie": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "verified": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "human": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA"
+    },
+    "oracle-public-voting": {
+        "default": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
+        "candidate": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
+        "invite": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
+        "newbie": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
+        "verified": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
+        "human": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\."
     }
 }
