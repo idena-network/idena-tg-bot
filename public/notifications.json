@@ -88,10 +88,10 @@
         "human": "Congratulations\\! Your identity is validated\\!\n[Validation results]({report-link})"
     },
     "oracle-voting-new": {
-        "default": "You have been chosen to the Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
-        "newbie": "You have been chosen to the Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
-        "verified": "You have been chosen to the Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
-        "human": "You have been chosen to the Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA"
+        "default": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "newbie": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "verified": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA",
+        "human": "You have been chosen to the new Oracle voting committee:\n\\- Committee size is *{commitee-size}* oracles\n\\- Prize pool is *{prize-pool}* iDNA"
     },
     "oracle-public-voting": {
         "default": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
