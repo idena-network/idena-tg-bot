@@ -1,6 +1,7 @@
 const dayjs = require('dayjs')
 const {bufferToHex, ecrecover, fromRpcSig, keccak256, pubToAddress} = require('ethereumjs-util')
 const utc = require('dayjs/plugin/utc')
+const {IdenaProvider} = require('idena-sdk-js')
 const Notifications = require('../public/notifications.json')
 const {IdentityStatus} = require('./types')
 
@@ -94,6 +95,14 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+/**
+ * Returns Idena Provider
+ * @returns {IdenaProvider} Provider
+ */
+function getIdenaProvider() {
+  return IdenaProvider.create(process.env.NODE_URL, process.env.NODE_KEY)
+}
+
 module.exports = {
   GenerateDnaUrl,
   checkSignature,
@@ -105,4 +114,5 @@ module.exports = {
   buildNextValidationCalendarLink,
   adjustDateToValidationTime,
   sleep,
+  getIdenaProvider,
 }

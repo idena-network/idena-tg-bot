@@ -8,7 +8,7 @@ const {
   ContractArgumentFormat,
 } = require('idena-sdk-js')
 const {persistTrigger, getTrigger, upsertOraclePublicVoting, getOraclePublicVotings} = require('../fauna')
-const {getNotification, log, logError} = require('../utils')
+const {getNotification, log, logError, escape} = require('../utils')
 
 const ID = 'oracle-watcher'
 
@@ -18,7 +18,7 @@ async function checkCoinbaseInCommitee(provider, contract, address) {
       {format: ContractArgumentFormat.Hex, index: 0, value: address},
     ])
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }
@@ -52,8 +52,20 @@ async function checkUserHasPrivateVote(provider, contract, coinbase) {
   try {
     await provider.Contract.readMap(contract, 'voteHashes', coinbase, ContractArgumentFormat.Hex)
     return true
-  } catch (e) {
+  } catch {
     return false
+  }
+}
+
+async function getPrizePool(provider, contract) {
+  try {
+    const balance = await provider.Dna.balance(contract)
+
+    const ownerFee = await provider.Contract.readData(contract, 'ownerFee', ContractArgumentFormat.Byte)
+
+    return parseFloat(balance.balance) * (1 - parseInt(ownerFee) / 100)
+  } catch {
+    return 0
   }
 }
 
@@ -98,7 +110,6 @@ class VotingStartTrigger extends EventEmitter {
       const votings = await getOraclePublicVotings(block.height)
       for (const voting of votings) {
         const {contract} = voting.data
-        console.log(contract)
         try {
           for (const user of users) {
             if (!user.identity) continue
@@ -178,6 +189,7 @@ class VotingStartTrigger extends EventEmitter {
     log(`[${this.constructor.name}], start voting: ${contract}`)
 
     const commiteeSize = await getCommiteeSize(this.provider, contract)
+    const prizePool = await getPrizePool(this.provider, contract)
 
     for (const user of users) {
       if (!user.identity) continue
@@ -190,7 +202,9 @@ class VotingStartTrigger extends EventEmitter {
 
         if (notification) {
           this.emit('message', {
-            message: notification.replace('{commitee-size}', commiteeSize).replace('{prize-pool}', 100),
+            message: notification
+              .replace('{commitee-size}', commiteeSize)
+              .replace('{prize-pool}', escape(prizePool.toFixed(2))),
             user,
             action: {
               title: 'Click to vote',
@@ -228,6 +242,7 @@ class VotingStartTrigger extends EventEmitter {
     log(`[${this.constructor.name}], prolong voting: ${contract}`)
 
     const commiteeSize = await getCommiteeSize(this.provider, contract)
+    const prizePool = await getPrizePool(this.provider, contract)
 
     for (const user of users) {
       if (!user.identity) continue
@@ -244,7 +259,9 @@ class VotingStartTrigger extends EventEmitter {
 
         if (notification) {
           this.emit('message', {
-            message: notification.replace('{commitee-size}', commiteeSize).replace('{prize-pool}', 100),
+            message: notification
+              .replace('{commitee-size}', commiteeSize)
+              .replace('{prize-pool}', escape(prizePool.toFixed(2))),
             user,
             action: {
               title: 'Click to vote',

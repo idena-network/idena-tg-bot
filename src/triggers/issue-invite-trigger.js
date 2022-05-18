@@ -1,9 +1,15 @@
 /* eslint-disable no-continue */
 const dayjs = require('dayjs')
 const EventEmitter = require('events')
-const {getLastBlock} = require('../api')
 const {isTriggerDone, persistTrigger} = require('../fauna')
-const {getNotification, getPercentDateByEpoch, logError, log, adjustDateToValidationTime} = require('../utils')
+const {
+  getNotification,
+  getPercentDateByEpoch,
+  logError,
+  log,
+  adjustDateToValidationTime,
+  getIdenaProvider,
+} = require('../utils')
 
 class IssueInviteTrigger extends EventEmitter {
   async _do(path, users) {
@@ -51,7 +57,7 @@ class IssueInviteTrigger extends EventEmitter {
     this.timeouts = []
     this.epoch = epochData.epoch
 
-    const currentBlock = await getLastBlock()
+    const currentBlock = await getIdenaProvider().Blockchain.lastBlock()
     const nextValidation = dayjs(epochData.nextValidation)
 
     const current = dayjs()

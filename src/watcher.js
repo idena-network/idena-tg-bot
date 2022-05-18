@@ -1,6 +1,5 @@
 const dayjs = require('dayjs')
 const {EventEmitter} = require('events')
-const {getEpoch, getIdentity} = require('./api')
 const {getUserList} = require('./fauna')
 const AcceptInviteTrigger = require('./triggers/accept-invite-trigger')
 const ExtraFlipTrigger = require('./triggers/extra-flip-trigger')
@@ -9,7 +8,7 @@ const IssueInviteTrigger = require('./triggers/issue-invite-trigger')
 const ValidationResultTrigger = require('./triggers/validation-result-trigger')
 const ValidationTrigger = require('./triggers/validation-trigger')
 const VotingStartTrigger = require('./triggers/voting-start-trigger')
-const {log, logError, sleep} = require('./utils')
+const {log, logError, sleep, getIdenaProvider} = require('./utils')
 
 /**
  * @typedef User
@@ -31,10 +30,11 @@ const allTriggers = [
 ]
 
 async function waitForNode() {
+  const provider = getIdenaProvider()
   let epoch = null
   while (!epoch) {
     try {
-      epoch = await getEpoch()
+      epoch = await provider.Dna.epoch()
     } catch (e) {
       logError('node is not ready!')
       await sleep(1000)
@@ -83,7 +83,7 @@ class Watcher extends EventEmitter {
   }
 
   async _waitForNewEpoch(prevEpoch) {
-    const newEpochData = await getEpoch()
+    const newEpochData = await getIdenaProvider().Dna.epoch()
 
     // validation finished
     if (prevEpoch !== newEpochData.epoch) {
@@ -94,7 +94,7 @@ class Watcher extends EventEmitter {
   }
 
   async _restartTriggers() {
-    this.epochData = await getEpoch()
+    this.epochData = await getIdenaProvider().Dna.epoch()
     const {epoch, nextValidation} = this.epochData
 
     log(`restart triggers, epoch: ${epoch}, next validation: ${nextValidation}`)
@@ -146,9 +146,10 @@ class Watcher extends EventEmitter {
   }
 
   async _updateIdentities() {
+    const provider = getIdenaProvider()
     for (const user of this.users) {
       try {
-        const identity = await getIdentity(user.coinbase)
+        const identity = await provider.Dna.identity(user.coinbase)
 
         if (identity) {
           user.identity = identity
