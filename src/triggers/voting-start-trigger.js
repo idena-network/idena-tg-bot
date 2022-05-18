@@ -8,7 +8,7 @@ const {
   ContractArgumentFormat,
 } = require('idena-sdk-js')
 const {persistTrigger, getTrigger, upsertOraclePublicVoting, getOraclePublicVotings} = require('../fauna')
-const {getNotification, log, logError, escape} = require('../utils')
+const {getNotification, log, logError, escape, getIdenaProvider} = require('../utils')
 
 const ID = 'oracle-watcher'
 
@@ -72,7 +72,7 @@ async function getPrizePool(provider, contract) {
 class VotingStartTrigger extends EventEmitter {
   constructor() {
     super()
-    this.provider = IdenaProvider.create(process.env.NODE_URL, process.env.NODE_KEY)
+    this.provider = getIdenaProvider()
   }
 
   async _do(users) {
