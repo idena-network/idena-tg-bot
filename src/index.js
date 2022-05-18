@@ -39,11 +39,21 @@ function sendTgMessageLoop() {
     return
   }
 
-  const {message, chatId} = data
+  const {message, chatId, action} = data
+
+  let extra = {
+    parse_mode: 'MarkdownV2',
+  }
+
+  if (action) {
+    extra = {
+      ...extra,
+      ...Markup.inlineKeyboard([Markup.button.url(action.title, action.url)]),
+    }
+  }
+
   bot.telegram
-    .sendMessage(chatId, message, {
-      parse_mode: 'MarkdownV2',
-    })
+    .sendMessage(chatId, message, extra)
     .then(() => setTimeout(sendTgMessageLoop, 1))
     .catch(e => {
       if (e.response?.error_code === 429) {
@@ -60,8 +70,8 @@ function sendTgMessageLoop() {
     })
 }
 
-watcher.on('message', ({message, chatId}) => {
-  tgQueue.push({message, chatId})
+watcher.on('message', ({message, chatId, action}) => {
+  tgQueue.push({message, chatId, action})
 })
 
 async function onAuth(token) {

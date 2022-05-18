@@ -113,15 +113,73 @@ async function isTriggerDone(id, epoch) {
   return serverClient.query(q.Exists(q.Match(q.Index('triggers_by_id_epoch'), id, epoch)))
 }
 
-async function persistTrigger(id, epoch) {
+async function persistTrigger(id, epoch, params) {
   return serverClient.query(
-    q.Create(q.Collection('triggers'), {
-      data: {
-        id,
-        epoch,
+    q.Let(
+      {
+        existing: q.Match(q.Index('triggers_by_id_epoch'), id, epoch),
       },
-    })
+      q.If(
+        q.Exists(q.Var('existing')),
+        q.Let(
+          {
+            existingRef: q.Select('ref', q.Get(q.Var('existing'))),
+          },
+          q.Update(q.Var('existingRef'), {data: params})
+        ),
+        q.Create(q.Collection('triggers'), {
+          data: {
+            id,
+            epoch,
+            ...params,
+          },
+        })
+      )
+    )
   )
+}
+
+async function getTrigger(id, epoch) {
+  try {
+    return serverClient.query(q.Get(q.Match(q.Index('triggers_by_id_epoch'), id, epoch)))
+  } catch {
+    return null
+  }
+}
+
+async function upsertOraclePublicVoting(contract, block) {
+  return serverClient.query(
+    q.Let(
+      {
+        existing: q.Match(q.Index('oracle-public-voting_by_contract'), contract),
+      },
+      q.If(
+        q.Exists(q.Var('existing')),
+        q.Let(
+          {
+            existingRef: q.Select('ref', q.Get(q.Var('existing'))),
+          },
+          q.Update(q.Var('existingRef'), {data: {block}})
+        ),
+        q.Create(q.Collection('oracle-public-voting'), {
+          data: {
+            contract,
+            block,
+          },
+        })
+      )
+    )
+  )
+}
+
+async function getOraclePublicVotings(block) {
+  const {data} = await serverClient.query(
+    q.Map(
+      q.Paginate(q.Match(q.Index('oracle-public-voting_by_block'), block), {size: 10000}),
+      q.Lambda('ref', q.Get(q.Var('ref')))
+    )
+  )
+  return data
 }
 
 module.exports = {
@@ -134,6 +192,9 @@ module.exports = {
   getUserList,
   isTriggerDone,
   persistTrigger,
+  getTrigger,
   getUserByTgId,
   deleteUserByTgId,
+  upsertOraclePublicVoting,
+  getOraclePublicVotings,
 }

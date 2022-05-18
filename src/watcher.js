@@ -8,6 +8,7 @@ const InviteeReminderTrigger = require('./triggers/invitee-reminder-trigger')
 const IssueInviteTrigger = require('./triggers/issue-invite-trigger')
 const ValidationResultTrigger = require('./triggers/validation-result-trigger')
 const ValidationTrigger = require('./triggers/validation-trigger')
+const VotingStartTrigger = require('./triggers/voting-start-trigger')
 const {log, logError, sleep} = require('./utils')
 
 /**
@@ -26,6 +27,7 @@ const allTriggers = [
   IssueInviteTrigger,
   ValidationTrigger,
   InviteeReminderTrigger,
+  VotingStartTrigger,
 ]
 
 async function waitForNode() {
@@ -75,7 +77,7 @@ class Watcher extends EventEmitter {
 
     for (const T of allTriggers) {
       const tg = new T()
-      tg.on('message', ({message, user}) => this.emit('message', {message, chatId: user.chatId}))
+      tg.on('message', ({message, user, action}) => this.emit('message', {message, chatId: user.chatId, action}))
       this.triggers.push(tg)
     }
   }
