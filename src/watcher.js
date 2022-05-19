@@ -159,7 +159,7 @@ class Watcher extends EventEmitter {
       }
     }
 
-    setTimeout(() => this._updateIdentities(), 60 * 1000)
+    setTimeout(() => this._updateIdentities(), 5 * 60 * 1000)
   }
 }
 

@@ -1,12 +1,6 @@
 /* eslint-disable no-continue */
 const EventEmitter = require('events')
-const {
-  IdenaProvider,
-  Transaction,
-  TransactionType,
-  CallContractAttachment,
-  ContractArgumentFormat,
-} = require('idena-sdk-js')
+const {Transaction, TransactionType, CallContractAttachment, ContractArgumentFormat} = require('idena-sdk-js')
 const {persistTrigger, getTrigger, upsertOraclePublicVoting, getOraclePublicVotings} = require('../fauna')
 const {getNotification, log, logError, escape, getIdenaProvider} = require('../utils')
 
@@ -100,7 +94,7 @@ class VotingStartTrigger extends EventEmitter {
 
       this.timeout = setTimeout(() => this._do(users), 1)
     } catch (e) {
-      logError(`[${this.constructor.name}], error: ${e.message}`)
+      logError(`[${this.constructor.name}] [_do], error: ${e.message}`)
       this.timeout = setTimeout(() => this._do(users), 5000)
     }
   }
