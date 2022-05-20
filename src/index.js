@@ -63,8 +63,13 @@ function sendTgMessageLoop() {
         const waitSeconds = e.response.parameters?.retry_after || 5
         tgQueue.unshift(data)
         setTimeout(sendTgMessageLoop, waitSeconds * 1000)
+      } else if (e.response?.error_code === 403) {
+        deleteUserByTgId(chatId).catch(err => {
+          log(`cannot delete user, reason: 403, error: ${err.message}`)
+        })
+        setTimeout(sendTgMessageLoop, 1)
       } else {
-        log(`error while writing to telegram, ${e.message}`)
+        log(`error while writing to telegram, error: ${e.message}`)
         setTimeout(sendTgMessageLoop, 1)
       }
     })
