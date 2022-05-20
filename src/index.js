@@ -55,7 +55,7 @@ function sendTgMessageLoop() {
   bot.telegram
     .sendMessage(chatId, message, extra)
     .then(() => setTimeout(sendTgMessageLoop, 1))
-    .catch(async e => {
+    .catch(e => {
       if (e.response?.error_code === 429) {
         log(
           `rate limit while writing to telegram, try_after: ${e.response.parameters?.retry_after}, queue_size: ${tgQueue.length}`
