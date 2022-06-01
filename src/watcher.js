@@ -71,8 +71,6 @@ class Watcher extends EventEmitter {
   }
 
   async _registerTriggers() {
-    for (const trigger of this.triggers) trigger.stop()
-
     this.triggers = []
 
     for (const T of allTriggers) {
@@ -94,6 +92,8 @@ class Watcher extends EventEmitter {
   }
 
   async _restartTriggers() {
+    for (const trigger of this.triggers) trigger.stop()
+
     this.epochData = await getIdenaProvider().Dna.epoch()
     const {epoch, nextValidation} = this.epochData
 

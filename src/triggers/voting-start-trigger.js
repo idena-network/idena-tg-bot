@@ -219,7 +219,7 @@ class VotingStartTrigger extends EventEmitter {
       return
     }
 
-    const delayedBlock = voteBlock + 3 // * 10 // 10 min
+    const delayedBlock = voteBlock + 3 * 10 // 10 min
 
     try {
       await upsertOraclePublicVoting(contract, delayedBlock)
