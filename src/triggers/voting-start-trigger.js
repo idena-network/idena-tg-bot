@@ -303,7 +303,7 @@ class VotingStartTrigger extends EventEmitter {
     log(`[${this.constructor.name}], start trigger, ${ID}`)
     this._stop = false
     this.epoch = epochData.epoch
-    this._do(users)
+    setTimeout(() => this._do(users), 0)
   }
 
   stop() {
