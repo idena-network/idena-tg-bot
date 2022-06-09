@@ -2,7 +2,7 @@
 const EventEmitter = require('events')
 const {Transaction, TransactionType, CallContractAttachment, ContractArgumentFormat} = require('idena-sdk-js')
 const {persistTrigger, getTrigger, upsertOraclePublicVoting, getOraclePublicVotings} = require('../fauna')
-const {getNotification, log, logError, escape, getIdenaProvider} = require('../utils')
+const {getNotification, log, logError, escape, getIdenaProvider, sleep} = require('../utils')
 
 const ID = 'oracle-watcher'
 
@@ -67,6 +67,7 @@ class VotingStartTrigger extends EventEmitter {
   constructor() {
     super()
     this.provider = getIdenaProvider()
+    this._stop = false
   }
 
   async _do(users) {
@@ -75,27 +76,38 @@ class VotingStartTrigger extends EventEmitter {
 
       if (!trigger) await persistTrigger(ID, 0, {block: 1})
 
-      const blockNum = trigger?.data?.block || 1
+      let blockNum = trigger?.data?.block || 1
 
-      const block = await this.provider.Blockchain.blockAt(blockNum + 1)
+      while (!this._stop) {
+        try {
+          const block = await this.provider.Blockchain.blockAt(blockNum + 1)
 
-      if (!block) {
-        this.timeout = setTimeout(() => this._do(users), 5000)
-        return
+          if (!block) {
+            await sleep(5000)
+            continue
+          }
+
+          log(`[${this.constructor.name}] [_do], process block: ${blockNum + 1}`)
+
+          if (block.transactions) {
+            await this.processBlock(block, users)
+          }
+
+          await this.processDelayed(block, users)
+
+          blockNum += 1
+
+          await persistTrigger(ID, 0, {block: blockNum})
+
+          await sleep(1)
+        } catch (e) {
+          logError(`[${this.constructor.name}] [_do], error: ${e?.message}`)
+          await sleep(1000)
+        }
       }
-
-      if (block.transactions) {
-        await this.processBlock(block, users)
-      }
-
-      await this.processDelayed(block, users)
-
-      await persistTrigger(ID, 0, {block: blockNum + 1})
-
-      this.timeout = setTimeout(() => this._do(users), 1)
     } catch (e) {
-      logError(`[${this.constructor.name}] [_do], error: ${e.message}`)
-      this.timeout = setTimeout(() => this._do(users), 5000)
+      logError(`[${this.constructor.name}] [_do], start error: ${e?.message}`)
+      setTimeout(() => this._do(users), 5000)
     }
   }
 
@@ -288,13 +300,15 @@ class VotingStartTrigger extends EventEmitter {
   }
 
   async start(epochData, users) {
+    log(`[${this.constructor.name}], start trigger, ${ID}`)
+    this._stop = false
     this.epoch = epochData.epoch
-
-    this.timeout = setTimeout(() => this._do(users), 0)
+    this._do(users)
   }
 
   stop() {
-    if (this.timeout) clearTimeout(this.timeout)
+    log(`[${this.constructor.name}], stop trigger, ${ID}`)
+    this._stop = true
   }
 }
 
