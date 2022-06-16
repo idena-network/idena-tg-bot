@@ -31,7 +31,7 @@ class ExtraFlipTrigger extends EventEmitter {
 
       if (identity.madeFlips < identity.requiredFlips) return
 
-      const extraCount = identity.availableFlips - identity.requiredFlips
+      const extraCount = identity.availableFlips - identity.madeFlips
 
       if (extraCount <= 0) return
 
