@@ -2,6 +2,7 @@ const dayjs = require('dayjs')
 const {EventEmitter} = require('events')
 const {getUserList} = require('./fauna')
 const AcceptInviteTrigger = require('./triggers/accept-invite-trigger')
+const AddStakeTrigger = require('./triggers/add-stake-trigger')
 const ExtraFlipTrigger = require('./triggers/extra-flip-trigger')
 const InviteeReminderTrigger = require('./triggers/invitee-reminder-trigger')
 const IssueInviteTrigger = require('./triggers/issue-invite-trigger')
@@ -27,6 +28,7 @@ const allTriggers = [
   ValidationTrigger,
   InviteeReminderTrigger,
   VotingStartTrigger,
+  AddStakeTrigger,
 ]
 
 async function waitForNode() {

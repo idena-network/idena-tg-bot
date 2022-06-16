@@ -39,7 +39,7 @@ class AcceptInviteTrigger extends EventEmitter {
     this.prevStates = {}
     this.epoch = epochData.epoch
 
-    this._loop(users)
+    this.timeout = setTimeout(() => this._loop(users), 1)
   }
 
   stop() {
