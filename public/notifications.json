@@ -99,5 +99,8 @@
         "newbie": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
         "verified": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\.",
         "human": "The Oracle voting has finished\\!\nPlease login into Idena app to publish your secret vote\\."
+    },
+    "add-stake": {
+        "default": "Your current identity stake is *{current-stake} iDNA*\n\n💰Estimated epoch reward for the quadratic staking is *{estimated-reward} iDNA*\n💰APY \\(annual percentage yield\\) is *{estimated-percent}%*\n\nReplenish your stake to earn more rewards\\.\nCalculate the estimated staking rewards [here](https://www.idena.io/ru/staking?amount={current-stake})\\.\n\n"
     }
 }
