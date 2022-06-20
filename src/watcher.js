@@ -124,7 +124,7 @@ class Watcher extends EventEmitter {
     this._registerTriggers()
     this.ready = true
 
-    this._restartTriggers()
+    await this._restartTriggers()
 
     log('launch done!')
   }
