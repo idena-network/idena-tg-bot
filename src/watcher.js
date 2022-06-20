@@ -87,7 +87,7 @@ class Watcher extends EventEmitter {
 
     // validation finished
     if (prevEpoch !== newEpochData.epoch) {
-      this._restartTriggers()
+      await this._restartTriggers()
     } else {
       setTimeout(() => this._waitForNewEpoch(prevEpoch), 5 * 60 * 1000)
     }
@@ -124,7 +124,7 @@ class Watcher extends EventEmitter {
     this._registerTriggers()
     this.ready = true
 
-    this._restartTriggers()
+    await this._restartTriggers()
 
     log('launch done!')
   }
