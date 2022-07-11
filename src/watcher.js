@@ -87,6 +87,7 @@ class Watcher extends EventEmitter {
 
     // validation finished
     if (prevEpoch !== newEpochData.epoch) {
+      await this._updateIdentities()
       await this._restartTriggers()
     } else {
       setTimeout(() => this._waitForNewEpoch(prevEpoch), 5 * 60 * 1000)
@@ -148,6 +149,8 @@ class Watcher extends EventEmitter {
   }
 
   async _updateIdentities() {
+    if (this.identitiesTimeout) clearTimeout(this.identitiesTimeout)
+
     const provider = getIdenaProvider()
     for (const user of this.users) {
       try {
@@ -161,7 +164,7 @@ class Watcher extends EventEmitter {
       }
     }
 
-    setTimeout(() => this._updateIdentities(), 5 * 60 * 1000)
+    this.identitiesTimeout = setTimeout(() => this._updateIdentities(), 5 * 60 * 1000)
   }
 }
 
