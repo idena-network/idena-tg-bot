@@ -53,11 +53,19 @@ async function checkUserHasPrivateVote(provider, contract, coinbase) {
 
 async function getPrizePool(provider, contract) {
   try {
-    const balance = await provider.Dna.balance(contract)
+    const balance = parseFloat(await provider.Dna.balance(contract))
 
+    const ownerDeposit = parseFloat(
+      (await provider.Contract.readData(contract, 'ownerDeposit', ContractArgumentFormat.Dna)) || 0
+    )
     const ownerFee = await provider.Contract.readData(contract, 'ownerFee', ContractArgumentFormat.Byte)
+    const oracleRewardFund =
+      parseFloat(await provider.Contract.readData(contract, 'oracleRewardFund', ContractArgumentFormat.Dna)) || 0
 
-    return parseFloat(balance.balance) * (1 - parseInt(ownerFee) / 100)
+    const replenishAmount = Math.max(0, balance - oracleRewardFund - ownerDeposit)
+    const ownerReturn = ownerDeposit + (replenishAmount * parseInt(ownerFee)) / 100
+
+    return balance - ownerReturn
   } catch {
     return 0
   }
