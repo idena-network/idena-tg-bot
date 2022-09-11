@@ -24,6 +24,40 @@ function calcPercent(age) {
   }
 }
 
+function calcReward(stake, apiData) {
+  const {weight, averageMinerWeight, validation, staking, onlineMinersCount} = apiData
+
+  // epoch staking
+  const epochStakingRewardFund = Number(staking) || 0.9 * Number(validation)
+  const epochReward = (stake ** 0.9 / weight) * epochStakingRewardFund
+
+  const myStakeWeight = stake ** 0.9
+
+  const proposerOnlyReward = (6 * myStakeWeight * 20) / (myStakeWeight * 20 + averageMinerWeight * 100)
+
+  const committeeOnlyReward = (6 * myStakeWeight) / (myStakeWeight + averageMinerWeight * 119)
+
+  const proposerAndCommitteeReward = (6 * myStakeWeight * 21) / (myStakeWeight * 21 + averageMinerWeight * 99)
+
+  const proposerProbability = 1 / onlineMinersCount
+
+  const committeeProbability = Math.min(100, onlineMinersCount) / onlineMinersCount
+
+  const proposerOnlyProbability = proposerProbability * (1 - committeeProbability)
+
+  const committeeOnlyProbability = committeeProbability * (1 - proposerProbability)
+
+  const proposerAndCommitteeProbability = proposerOnlyProbability * committeeOnlyProbability
+
+  const estimatedReward =
+    85000 *
+    (proposerOnlyProbability * proposerOnlyReward +
+      committeeOnlyProbability * committeeOnlyReward +
+      proposerAndCommitteeProbability * proposerAndCommitteeReward)
+
+  return estimatedReward + epochReward
+}
+
 function getLastLine(identity) {
   const {state, age} = identity
   if ([IdentityStatus.Invite, IdentityStatus.Candidate, IdentityStatus.Newbie].includes(state)) {
@@ -52,13 +86,17 @@ async function getApiData(currentEpoch) {
   try {
     const axiosInstance = axios.create({baseURL: process.env.INDEXER_URL})
     const {data: weightData} = await axiosInstance.get('staking')
+    const {data: onlineMinersCount} = await axiosInstance.get('onlineminers/count')
     const {data: rewardData} = await axiosInstance.get(`epoch/${currentEpoch - 1}/rewardssummary`)
     const {data: prevEpoch} = await axiosInstance.get(`epoch/${currentEpoch - 1}`)
     const {data: currEpoch} = await axiosInstance.get(`epoch/${currentEpoch}`)
 
     return {
       weight: parseFloat(weightData.result.weight),
-      reward: parseFloat(rewardData.result.staking),
+      averageMinerWeight: parseFloat(weightData.result.averageMinerWeight),
+      staking: parseFloat(rewardData.result.staking),
+      validation: parseFloat(rewardData.result.validation),
+      onlineMinersCount,
       epochDuration: dayjs(currEpoch.result.validationTime).diff(dayjs(prevEpoch.result.validationTime), 'day'),
     }
   } catch (e) {
@@ -98,7 +136,7 @@ class AddStakeTrigger extends EventEmitter {
       const notification = getNotification('add-stake')({state: IdentityStatus.Undefined})
 
       if (notification) {
-        const epochReward = (stake ** 0.9 / (stake ** 0.9 + apiResult.weight)) * apiResult.reward
+        const epochReward = calcReward(stake, apiResult)
         this.emit('message', {
           message:
             notification
@@ -106,7 +144,7 @@ class AddStakeTrigger extends EventEmitter {
               .replace('{estimated-reward}', escape(epochReward.toFixed(2)))
               .replace(
                 '{estimated-percent}',
-                escape(((epochReward / stake / apiResult.epochDuration) * 366 * 100).toFixed(2))
+                escape(((epochReward / stake / Math.max(1, apiResult.epochDuration)) * 366 * 100).toFixed(2))
               ) + getLastLine(identity),
           user,
         })
