@@ -96,7 +96,7 @@ async function getApiData(currentEpoch) {
       averageMinerWeight: parseFloat(weightData.result.averageMinerWeight),
       staking: parseFloat(rewardData.result.staking),
       validation: parseFloat(rewardData.result.validation),
-      onlineMinersCount,
+      onlineMinersCount: parseInt(onlineMinersCount.result),
       epochDuration: dayjs(currEpoch.result.validationTime).diff(dayjs(prevEpoch.result.validationTime), 'day'),
     }
   } catch (e) {
