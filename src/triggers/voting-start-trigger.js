@@ -149,7 +149,7 @@ class VotingStartTrigger extends EventEmitter {
                   user,
                   action: {
                     title: 'Login into Idena app',
-                    url: 'https://app.idena.io/wallets',
+                    url: `https://app.idena.io/oracles/view?id=${contract}`,
                   },
                 })
               }
