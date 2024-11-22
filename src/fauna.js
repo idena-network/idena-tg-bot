@@ -100,12 +100,19 @@ function deleteUserByTgId(tgUserId) {
 }
 
 async function getUserList() {
-  const {data} = await serverClient.query(
-    q.Map(
-      q.Paginate(q.Match(q.Index('users_with_coinbase'), true), {size: 10000}),
-      q.Lambda('ref', q.Get(q.Var('ref')))
+  const data = []
+  let after
+
+  do {
+    const {data: newData, after: nextAfter} = await serverClient.query(
+      q.Map(
+        q.Paginate(q.Match(q.Index('users_with_coinbase'), true), {size: 200, after}),
+        q.Lambda('ref', q.Get(q.Var('ref')))
+      )
     )
-  )
+    data.push(...newData)
+    after = nextAfter
+  } while (!!after)
   return data
 }
 
